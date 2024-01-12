@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+  <head>
+    <meta charset="utf-8" />
+    <title>Web Image Editor in JavaScript</title>
+    <link rel="stylesheet" type="text/css" href="./output.css" />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/boxicons@2.1.2/css/boxicons.min.css"
+    />
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css"
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Bungee+Spice&family=Roboto+Condensed&display=swap"
+      rel="stylesheet"
+    />
+  </head>
+  <style type="text/css">
+    .custom-cls {
+      width: fit-content;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .custom-cls-bottom {
+      width: fit-content;
+      position: absolute;
+      right: 2%;
+      top: 75%;
+      padding-bottom: 10px;
+    }
+    .flex__box {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 10px;
+    }
+    #canvas1 {
+      z-index: -10;
+    }
+
+    body {
+      font-family: "Roboto Condensed", sans-serif;
+      letter-spacing: 2px;
+    }
+  </style>
+
+  <body class="bg-black">
+    <!-- canvas element for background  -->
+    <canvas id="canvas1"></canvas>
+    <div class="container mx-auto disable">
+      <h2
+        class="text-3xl font-bold mb-4 text-start absolute top-[4%] left-[2%] text-white"
+      >
+        Image Editor
+      </h2>
+      <div class="flex flex-col gap-20 wrapper">
+        <!-- left  filter section -->
+        <div
+          class="w-fit lg:w-[200px] absolute left-[2%] top-[15%] bg-slate-900 border border-blue-700 rounded-md p-2 filter"
+        >
+          <label
+            class="title tracking-wider text-center mb-2 hidden text-white font-bold lg:block"
+            >Filters</label
+          >
+          <div class="flex flex-col flex-wrap options">
+            <button
+              id="brightness"
+              class="active bg-blue-500 hover:bg-blue-700 text-white mb-2 mr-2 px-2 py-1 rounded-md flex__box"
+            >
+              <i class="fas fa-sun"></i>
+              <p class="lg:block hidden">Brightness</p>
+            </button>
+
+            <button
+              id="saturation"
+              class="bg-blue-500 hover:bg-blue-700 text-white mb-2 mr-2 px-4 py-1 rounded-md flex__box"
+            >
+              <i class="fas fa-tint"></i>
+              <p class="lg:block hidden">Saturation</p>
+            </button>
+
+            <button
+              id="inversion"
+              class="bg-blue-500 hover:bg-blue-700 text-white mb-2 mr-2 px-4 py-1 rounded-md flex__box"
+            >
+              <i class="fas fa-adjust"></i>
+              <p class="lg:block hidden">Inversion</p>
+            </button>
+            <button
+              id="grayscale"
+              class="bg-blue-500 hover:bg-blue-700 text-white mb-2 mr-2 px-4 py-1 rounded-md flex__box"
+            >
+              <i class="fas fa-image"></i>
+              <p class="lg:flex hidden">Grayscale</p>
+            </button>
+          </div>
+          <div class="rotate">
+            <div class="w-full flex flex-col justify-start gap-2 options">
+              <button
+                id="left"
+                class="bg-blue-500 hover:bg-blue-700 text-white mr-2 px-4 py-1 rounded-md flex__box"
+              >
+                <i class="fas fa-undo-alt"></i>
+                <p class="lg:flex hidden">Rotate left</p>
+              </button>
+
+              <button
+                id="right"
+                class="bg-blue-500 hover:bg-blue-700 text-white mr-2 px-4 py-1 rounded-md flex__box"
+              >
+                <i class="fas fa-redo-alt"></i>
+                <p class="lg:flex hidden">Rotate right</p>
+              </button>
+
+              <button
+                id="horizontal"
+                class="bg-blue-500 hover:bg-blue-700 text-white mr-2 px-4 py-1 rounded-md flex__box"
+              >
+                <i class="bx bx-reflect-vertical"></i>
+                <p class="lg:flex hidden">Flip vertical</p>
+              </button>
+
+              <button
+                id="vertical"
+                class="bg-blue-500 hover:bg-blue-700 text-white mb-2 mr-2 px-4 py-1 rounded-md flex__box"
+              >
+                <i class="bx bx-reflect-horizontal"></i>
+                <p class="lg:flex hidden">Flip horizontal</p>
+              </button>
+            </div>
+          </div>
+          <div class="text-center flex justify-center">
+            <button
+              id="reset"
+              class="reset-filter bg-blue-500 hover:bg-blue-700 text-white py-1 px-4 rounded-md flex__box"
+            >
+              <i class="fa fa-refresh" aria-hidden="true"></i>
+              <p class="lg:block hidden">reset</p>
+            </button>
+          </div>
+        </div>
+
+        <!-- filter state changer section -->
+        <div
+          class="slider flex flex-col ring ring-1 ring-blue-600 rounded-lg px-3 py-1 absolute left-[2%] bottom-[3%] bg-slate-900 w-[200px] md:w-[300px]"
+        >
+          <div
+            class="text-white font-bold z-20 filter-info flex justify-between items-center"
+          >
+            <span class="hidden lg:block text-base name">Brightness</span>
+            <span class="value"> 100%</span>
+          </div>
+          <input
+            type="range"
+            value="100"
+            min="0"
+            max="200"
+            class="w-full accent-blue-700"
+          />
+        </div>
+        <!-- end of filter state section -->
+
+        <!-- image editing section -->
+        <div
+          class="custom-cls ml-2 p-2 h-[70%] ring-1 ring-white flex justify-center items-center"
+        >
+          <div class="preview-img">
+            <img
+              src="./public/placeholder.jpg"
+              alt="preview-img"
+              class="w-full rounded-md shadow-md"
+            />
+          </div>
+        </div>
+      </div>
+      <!-- right-side-edit-panel -->
+
+      <div class="w-fit flex flex-col mt-[6%] lg:mt-[4%] custom-cls-bottom">
+        <div class="mb-2 flex">
+          <input type="file" class="file-input hidden" accept="image/*" />
+          <button
+            class="choose-img bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded-md mr-2 flex__box"
+          >
+            <i class="fa fa-upload"></i>
+            <p class="sm:block hidden">Choose Image</p>
+          </button>
+          <button
+            class="save-img bg-blue-500 hover:bg-blue-700 text-white py-1 px-2 rounded-md flex__box"
+          >
+            <i class="fa fa-save"></i>
+            <p class="sm:block hidden">Save Image</p>
+          </button>
+        </div>
+      </div>
+      <!-- end of the right side panel -->
+    </div>
+
+    <script src="./src//particle.js"></script>
+    <script src="./src/srcipt.js"></script>
+  </body>
+</html>

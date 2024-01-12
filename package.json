@@ -1,0 +1,12 @@
+{
+  "name": "web-image-editor-app",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "tail": "npx tailwindcss -i ./global.css -o ./output.css --watch"
+  },
+  "devDependencies": {
+    "tailwindcss": "^3.4.1"
+  }
+}
